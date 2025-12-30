@@ -62,3 +62,9 @@ Lightweight desktop app — tiny memory usage and native performance.
 
 ```bash
 npm install
+```
+### 2. Run in dev mode
+```bash
+npm run tauri dev
+```
+
