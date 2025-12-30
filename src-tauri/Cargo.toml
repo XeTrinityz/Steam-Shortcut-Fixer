@@ -1,0 +1,25 @@
+[package]
+name = "steam-shortcut-fixer"
+version = "1.0.0"
+description = "Fix broken Steam shortcuts"
+authors = ["XeTrinityz"]
+edition = "2021"
+
+[lib]
+name = "steam_shortcut_fixer_lib"
+crate-type = ["lib", "cdylib", "staticlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+tauri-plugin-dialog = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+regex = "1"
+reqwest = { version = "0.11", features = ["blocking"] }
+
+[target.'cfg(windows)'.dependencies]
+winreg = "0.52"
