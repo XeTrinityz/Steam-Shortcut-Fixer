@@ -1,8 +1,9 @@
-﻿import { useState, useEffect } from 'react';
+﻿import { useState, useEffect, useRef } from 'react';
 import { Play, FolderOpen, AlertCircle, CheckCircle, Settings, RefreshCw, XCircle, Search, Clock, Package, ChevronDown, X, Info, Loader2, Minimize, Sparkles } from 'lucide-react';
 import { invoke } from '@tauri-apps/api/core';
 import { open } from '@tauri-apps/plugin-dialog';
 import { getCurrentWindow } from '@tauri-apps/api/window';
+import titlebarIcon from './assets/SSF.png';
 
 interface Game {
   name: string;
@@ -40,8 +41,6 @@ const FILTERED_GAMES = [
   'Proton',
 ];
 
-import titlebarIcon from './assets/SSF.png';
-
 function App() {
   const [games, setGames] = useState<Game[]>([]);
   const [filteredGames, setFilteredGames] = useState<Game[]>([]);
@@ -60,15 +59,14 @@ function App() {
   const [quickFixResults, setQuickFixResults] = useState<ShortcutFix[]>([]);
   const [showQuickFixResults, setShowQuickFixResults] = useState(false);
   const [toastCounter, setToastCounter] = useState(0);
+  const hasInitialScanRun = useRef(false);
 
-  const minimizeWindow = async () => {
-    const win = await getCurrentWindow();
-    await win.minimize();
+  const minimizeWindow = () => {
+    getCurrentWindow().minimize();
   };
 
-   const closeWindow = async () => {
-    const win = await getCurrentWindow();
-    await win.close();
+  const closeWindow = () => {
+    getCurrentWindow().close();
   };
 
   const startDragging = async (e: any) => {
@@ -119,19 +117,26 @@ function App() {
       setToasts(prev => prev.filter(t => t.id !== id));
     }, 4000);
   };
-
+  
   const loadGames = async () => {
     try {
-      setIsScanning(true);
-      const scannedGames = await invoke<Game[]>('scan_games', { steamappsPath });
-      const validGames = scannedGames.filter(g => 
+    setIsScanning(true);
+    const scannedGames = await invoke<Game[]>('scan_games', { steamappsPath });
+    const validGames = scannedGames.filter(g =>
         !FILTERED_GAMES.some(excluded => g.name.includes(excluded))
-      );
-      setGames(validGames.map(g => ({ ...g, status: 'ready', progress: 0 })));
+    );
+
+    setGames(validGames.map(g => ({ ...g, status: 'ready', progress: 0 })));
+
+    if (!hasInitialScanRun.current) {
+        hasInitialScanRun.current = true;
+    } else {
+        addToast(`Found ${validGames.length} games across all libraries`, 'success');
+    }
     } catch (err) {
-      addToast(`Failed to scan games: ${err}`, 'error');
+    addToast(`Failed to scan games: ${err}`, 'error');
     } finally {
-      setIsScanning(false);
+    setIsScanning(false);
     }
   };
 
@@ -388,6 +393,15 @@ function App() {
           background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
           background-clip: padding-box;
         }
+
+        .custom-scrollbar-green::-webkit-scrollbar-thumb {
+          background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+        }
+
+        .custom-scrollbar-green::-webkit-scrollbar-thumb:hover {
+         background: linear-gradient(135deg, #16a34a 0%, #059669 100%);
+        }
+
       `}</style>
 
       {/* Custom Titlebar */}
@@ -421,7 +435,7 @@ function App() {
       </div>
 
       {/* Toasts */}
-      <div className="fixed top-12 right-4 z-50 space-y-2">
+      <div className="fixed top-16 right-4 z-50 space-y-2">
         {toasts.map(toast => (
           <div
             key={toast.id}
@@ -582,8 +596,8 @@ function App() {
                     <Sparkles className="w-5 h-5 text-green-400" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-sm text-green-300">Quick Fix (Recommended)</h3>
-                    <p className="text-xs text-green-400/80">Fixes missing icons in Desktop, Start Menu & OneDrive - takes seconds!</p>
+                    <h3 className="font-semibold text-sm text-green-300">Quick Fix</h3>
+                    <p className="text-xs text-green-400/80">Fixes missing icons in Desktop, Start Menu & OneDrive!</p>
                   </div>
                 </div>
                 <button
@@ -672,7 +686,7 @@ function App() {
                   onClick={() => !isProcessing && toggleGame(game.app_id)}
                   className={`group p-5 rounded-xl border transition-all cursor-pointer ${
                     selectedGames.has(game.app_id)
-                      ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-500/50 shadow-lg shadow-blue-500/20 scale-[1.01]'
+                      ? 'bg-gradient-to-r from-blue-900/30 to-purple-900/30 border-blue-500/50'
                       : 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-gray-600 hover:scale-[1.005]'
                   }`}
                 >
@@ -823,7 +837,7 @@ function App() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto custom-scrollbar space-y-2">
+            <div className="flex-1 overflow-y-auto custom-scrollbar custom-scrollbar-green space-y-2">
               {quickFixResults.map((result, index) => (
                 <div
                   key={index}
