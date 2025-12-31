@@ -1,7 +1,7 @@
 ﻿# Steam Shortcut Fixer
 
 A modern, fast Tauri + React utility that scans your Steam libraries and **repairs missing or broken shortcuts**.  
-Fixes missing icons in the Desktop, Start Menu, and OneDrive — and provides a deeper repair option for fully broken installs.
+Fixes missing icons in the Desktop, Start Menu, and OneDrive - and provides a deeper repair option for fully broken installs.
 
 ![UI Preview](./docs/screenshot.png)
 
@@ -9,13 +9,12 @@ Fixes missing icons in the Desktop, Start Menu, and OneDrive — and provides a 
 
 ## ✨ Features
 
-### 🔧 Quick Fix (Recommended)
+### 🔧 Quick Fix
 - Repairs missing **Steam game icons**
 - Works with:
   - Desktop shortcuts
   - Start Menu shortcuts
   - OneDrive-synced shortcuts
-- Takes only a few seconds
 
 ### 🛠️ Deep Repair Mode
 Designed for when **shortcuts are completely gone**  
@@ -44,14 +43,11 @@ Automatically:
 - 🧰 **TypeScript**
 - 🖼️ **Lucide Icons**
 
-Lightweight desktop app — tiny memory usage and native performance.
-
 ---
 
 ## 🚀 Getting Started (Development)
 
 ### Prerequisites
-
 - Node.js (LTS recommended)
 - Rust toolchain (`rustup`)
 - Steam installed
@@ -59,7 +55,6 @@ Lightweight desktop app — tiny memory usage and native performance.
 ---
 
 ### 1. Install dependencies
-
 ```bash
 npm install
 ```
