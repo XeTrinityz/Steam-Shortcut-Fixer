@@ -4,7 +4,7 @@
     <img src="https://img.shields.io/github/downloads/XeTrinityz/Steam-Shortcut-Fixer/total?style=for-the-badge" alt="Downloads">
   </a>
   <br>
-  A modern, fast Tauri + React utility that scans your Steam libraries and **repairs missing or broken shortcuts**.  
+  A modern, fast Tauri + React utility that scans your Steam libraries and <b>repairs missing or broken shortcuts</b>.  
   Fixes missing icons in the Desktop, Start Menu, and OneDrive - and provides a deeper repair option for fully broken installs.
 </div>
 
