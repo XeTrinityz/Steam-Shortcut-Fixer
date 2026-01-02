@@ -1,6 +1,7 @@
-﻿use std::fs;
+use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
+use std::collections::HashSet;
 use serde::{Deserialize, Serialize};
 use regex::Regex;
 
@@ -109,6 +110,7 @@ fn get_shortcut_locations() -> Vec<PathBuf> {
 #[tauri::command]
 fn scan_games(steamapps_path: String) -> Result<Vec<Game>, String> {
     let mut games = Vec::new();
+    let mut seen_app_ids = HashSet::new();
     let libraries = get_steam_library_folders(&steamapps_path);
     
     println!("Found {} Steam library folders", libraries.len());
@@ -129,7 +131,9 @@ fn scan_games(steamapps_path: String) -> Result<Vec<Game>, String> {
                     let filename_str = filename.to_string_lossy();
                     if filename_str.starts_with("appmanifest_") && filename_str.ends_with(".acf") {
                         if let Ok(game) = parse_manifest(&path, &common_path) {
-                            games.push(game);
+                            if seen_app_ids.insert(game.app_id.clone()) {
+                                games.push(game);
+                            }
                         }
                     }
                 }
@@ -438,3 +442,4 @@ pub fn run() {
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
+
